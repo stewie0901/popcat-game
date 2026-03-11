@@ -57,7 +57,6 @@
         }
 
         /* [x] 新贈文字 div 背景圖片 用 id 設定 imgs/op.png */
-        /* 當 JavaScript 加入 .open 類別時觸發 */
         #p.open {
             background-image: url('imgs/op.png');
         }
@@ -75,28 +74,58 @@
         const cat = document.getElementById('p');
         let count = 0;
 
+        // [x] 音效功能清單：載入 1-4 號音效檔案進入陣列
+        const popAudios = [
+            new Audio('pops/pop1.mp3'),
+            new Audio('pops/pop2.mp3'),
+            new Audio('pops/pop3.mp3'),
+            new Audio('pops/pop4.mp3')
+        ];
+
+        // [x] 用 javascript 預載張嘴圖片 op.png
+        const preloadImage = new Image();
+        preloadImage.src = 'imgs/op.png';
+
+        // [x] 寫一個 function: 計數器累加
         function pop() {
             count++;
+
+            // [x] 在 console 下面，用 console.log(count) 去觀察 count 的變化
+            console.log(count);
+
+            // [x] 顯示計數器的數字
             cat.innerText = count;
-            cat.classList.add('open'); // 增加 .open 類別以顯示 op.png
+
+            // [x] 當滑鼠按下，切換張嘴圖片 (透過新增 classList)
+            cat.classList.add('open'); 
+
+            // [x] 當滑鼠按下，輪流播放 pop1-4 的 mp3
+            // 使用 (count - 1) % 4 來確保數字永遠在 0, 1, 2, 3 之間循環
+            const audioIndex = (count - 1) % popAudios.length;
+            const currentAudio = popAudios[audioIndex];
+            
+            currentAudio.currentTime = 0;
+            currentAudio.play();
         }
 
         function unpop() {
-            cat.classList.remove('open'); // 移除 .open 類別回到 p.png
+            // [x] 細部功能清單：滑鼠放開後，等待 25 毫秒，再切回閉嘴圖片
+            setTimeout(() => {
+                // [x] 註冊滑鼠放開的事件，切換回 p.png (移除 classList)
+                cat.classList.remove('open');
+            }, 25);
         }
 
-        // 滑鼠事件
+        // 事件註冊
         cat.addEventListener('mousedown', pop);
         cat.addEventListener('mouseup', unpop);
         cat.addEventListener('mouseleave', unpop);
 
-        // 鍵盤事件
         window.addEventListener('keydown', (e) => {
             if (!e.repeat) pop();
         });
         window.addEventListener('keyup', unpop);
 
-        // 手機觸控支援
         cat.addEventListener('touchstart', (e) => {
             e.preventDefault(); 
             pop();
